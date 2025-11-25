@@ -14,12 +14,17 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer userId;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
+    @Column(nullable = false)
     private String nom;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private NiveauFidelite niveauFidelite = NiveauFidelite.BASIC; // valeur par défaut
 }
