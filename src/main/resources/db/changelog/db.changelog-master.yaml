@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/01-create-table-users.yaml
+  - include:
+      file: db/changelog/01-create-table-clients.yaml
+
