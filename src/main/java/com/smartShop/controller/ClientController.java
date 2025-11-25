@@ -3,6 +3,7 @@ package com.smartShop.controller;
 import com.smartShop.dto.ClientDto;
 import com.smartShop.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,28 +15,29 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @PostMapping
-    public ClientDto create(@RequestBody ClientDto dto) {
-        return clientService.create(dto);
-    }
-
     @GetMapping
-    public List<ClientDto> getAll() {
-        return clientService.getAll();
+    public ResponseEntity<List<ClientDto>> getAllClients() {
+        return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @GetMapping("/{id}")
-    public ClientDto getById(@PathVariable Integer id) {
-        return clientService.getById(id);
+    public ResponseEntity<ClientDto> getClientById(@PathVariable Integer id) {
+        return ResponseEntity.ok(clientService.getClientById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto dto) {
+        return ResponseEntity.ok(clientService.createClient(dto));
     }
 
     @PutMapping("/{id}")
-    public ClientDto update(@PathVariable Integer id, @RequestBody ClientDto dto) {
-        return clientService.update(id, dto);
+    public ResponseEntity<ClientDto> updateClient(@PathVariable Integer id, @RequestBody ClientDto dto) {
+        return ResponseEntity.ok(clientService.updateClient(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        clientService.delete(id);
+    public ResponseEntity<Void> deleteClient(@PathVariable Integer id) {
+        clientService.deleteClient(id);
+        return ResponseEntity.noContent().build();
     }
 }
