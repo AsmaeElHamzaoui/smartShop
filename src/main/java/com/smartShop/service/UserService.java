@@ -37,4 +37,18 @@ public class UserService {
         return userMapper.toDTO(savedUser);
     }
 
+    // READ ALL
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    // READ BY ID
+    public UserDto getUserById(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.toDTO(user);
+    }
 }
