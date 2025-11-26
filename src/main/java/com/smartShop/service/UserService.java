@@ -6,7 +6,7 @@ import com.smartShop.entity.User;
 import com.smartShop.mapper.UserMapper;
 import com.smartShop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
+    // Méthode pour hasher le mot de passe
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(12)); // 12 rounds
+    }
 
     // CREATE
     public UserDto createUser(RegisterRequest request) {
@@ -30,7 +35,7 @@ public class UserService {
 
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // hash password
+        user.setPassword(hashPassword(request.getPassword())); // hash password
         user.setRole(request.getRole());
 
         User savedUser = userRepository.save(user);
@@ -64,7 +69,7 @@ public class UserService {
 
         user.setUsername(request.getUsername());
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(request.getPassword())); // hash new password
+            user.setPassword(hashPassword(request.getPassword())); // hash new password
         }
         user.setRole(request.getRole());
 
