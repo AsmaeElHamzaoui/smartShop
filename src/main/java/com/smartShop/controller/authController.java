@@ -1,6 +1,7 @@
 package com.smartShop.controller;
 
 
+import com.smartShop.dto.LoginRequest;
 import com.smartShop.dto.UserDto;
 import com.smartShop.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +15,20 @@ public class authController {
 
     private final UserService userService;
 
+    // LOGIN
+    @PostMapping("/login")
+    public UserDto login(@RequestBody LoginRequest request, HttpSession session) {
 
+        UserDto userDto = userService.authenticate(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        // Stocker l'utilisateur dans la session
+        session.setAttribute("user", userDto);
+
+        return userDto;
+    }
 
 
 
