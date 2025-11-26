@@ -84,4 +84,18 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    //AUTHENTIFICATION METHOD
+    public UserDto authenticate(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+
+        // Vérifier le password (BCrypt)
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw new RuntimeException("Invalid username or password");
+        }
+
+        return userMapper.toDTO(user);
+    }
+
 }
