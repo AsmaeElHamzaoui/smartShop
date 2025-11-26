@@ -21,6 +21,10 @@ public class ProductController {
         return ResponseEntity.ok(productService.create(dto));
     }
 
-
+    // READ ALL
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> getAll() {
+        return ResponseEntity.ok(productService.getAll());
+    }
 
 }
