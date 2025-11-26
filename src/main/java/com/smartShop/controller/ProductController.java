@@ -15,4 +15,12 @@ public class ProductController {
 
     private final ProductService productService;
 
+    // CREATE
+    @PostMapping
+    public ResponseEntity<ProductDto> create(@RequestBody ProductDto dto) {
+        return ResponseEntity.ok(productService.create(dto));
+    }
+
+
+
 }
