@@ -20,7 +20,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
 
-        // --------- 1) Vérifier si l'utilisateur est connecté ----------
+        // 1) Vérifier si l'utilisateur est connecté
         if (session == null || session.getAttribute("user") == null) {
             throw new UnauthorizedActionException("Vous devez être connecté.");
         }
@@ -33,6 +33,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         // Autoriser le logout pour tout utilisateur connecté
         if (path.startsWith("/auth/logout")) return true;
+
 
 
 
