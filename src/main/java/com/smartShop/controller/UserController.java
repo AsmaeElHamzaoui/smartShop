@@ -16,4 +16,15 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+
 }
