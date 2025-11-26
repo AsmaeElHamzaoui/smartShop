@@ -72,5 +72,11 @@ public class UserService {
         return userMapper.toDTO(updatedUser);
     }
 
-
+    // DELETE
+    public void deleteUser(Integer id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.deleteById(id);
+    }
 }
