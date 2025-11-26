@@ -35,6 +35,10 @@ public class SessionInterceptor implements HandlerInterceptor {
         if (path.startsWith("/auth/logout")) return true;
 
 
+        // 2) ADMIN : accès total
+        if (role == Role.ADMIN) {
+            return true;
+        }
 
 
 
