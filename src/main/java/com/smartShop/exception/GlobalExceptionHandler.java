@@ -28,4 +28,14 @@ public class GlobalExceptionHandler {
     }
 
 
+    // 400 - Erreur de validation
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(
+            ValidationException ex, HttpServletRequest request) {
+
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+
+
 }
