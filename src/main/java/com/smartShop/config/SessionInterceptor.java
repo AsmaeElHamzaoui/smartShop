@@ -41,6 +41,44 @@ public class SessionInterceptor implements HandlerInterceptor {
         }
 
 
+        // 3) CLIENT
+        if (role == Role.CLIENT) {
+
+            // CLIENT n'a QUE des GET
+            if (!method.equals("GET")) {
+                throw new ForbiddenException("Les clients ne peuvent pas modifier les données.");
+            }
+
+            // Interdiction totale d'accéder à des endpoints admin
+            if (path.startsWith("/api/users") || path.startsWith("/admin")) {
+                throw new ForbiddenException("Accès réservé aux administrateurs.");
+            }
+
+            // Produits accessible
+            if (path.startsWith("/products")) {
+                return true;
+            }
+
+            // Profil (uniquement son propre)
+            if (path.startsWith("/profile")) {
+                return true;
+            }
+
+            // Commandes personnelles
+            if (path.startsWith("/commandesPersonnal")) {
+                return true;
+            }
+
+            // Statistiques perso
+            if (path.startsWith("/statisticsPersonnal")) {
+                return true;
+            }
+
+            // Toute autre endpoint = interdit pour client
+            throw new ForbiddenException("Accès non autorisé pour un client.");
+        }
+
+
 
         return false;
     }
