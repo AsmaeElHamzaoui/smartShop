@@ -22,5 +22,19 @@ public class UserService {
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    // CREATE
+    public UserDto createUser(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // hash password
+        user.setRole(request.getRole());
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toDTO(savedUser);
+    }
 
 }
