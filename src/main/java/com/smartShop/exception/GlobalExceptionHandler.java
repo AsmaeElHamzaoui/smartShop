@@ -63,6 +63,13 @@ public class GlobalExceptionHandler {
     }
 
 
+    // 422 - Règle métier violée
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusiness(
+            BusinessException ex, HttpServletRequest request) {
+
+        return buildErrorResponse(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
 
 
 }
