@@ -27,4 +27,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAll());
     }
 
+    // READ ONE
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(productService.getById(id));
+    }
 }
