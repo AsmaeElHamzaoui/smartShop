@@ -37,5 +37,18 @@ public class GlobalExceptionHandler {
     }
 
 
+    // 401 - Non authentifié
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(
+            UnauthorizedActionException ex, HttpServletRequest request) {
+
+        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
+
+
+
+
+
 
 }
