@@ -39,4 +39,17 @@ public class ProductService {
                 .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    // UPDATE
+    public ProductDto update(Integer id, ProductDto dto) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé : " + id));
+
+        existing.setNom(dto.getNom());
+        existing.setPrixUnitaire(dto.getPrixUnitaire());
+        existing.setStockDisponible(dto.getStockDisponible());
+
+        Product updated = productRepository.save(existing);
+        return productMapper.toDTO(updated);
+    }
 }
