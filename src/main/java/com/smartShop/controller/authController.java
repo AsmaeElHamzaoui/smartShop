@@ -11,4 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class authController {
+
+    private final UserService userService;
+
+
+
+
+
 }
