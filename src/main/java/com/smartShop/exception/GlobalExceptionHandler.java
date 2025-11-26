@@ -71,5 +71,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
+    // 500 - Exception générale
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneral(
+            Exception ex, HttpServletRequest request) {
+
+        return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
 
 }
