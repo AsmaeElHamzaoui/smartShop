@@ -24,4 +24,11 @@ public class ProductService {
         Product saved = productRepository.save(product);
         return productMapper.toDTO(saved);
     }
+
+    // READ ONE
+    public ProductDto getById(Integer id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé : " + id));
+        return productMapper.toDTO(product);
+    }
 }
