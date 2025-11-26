@@ -45,7 +45,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
     }
 
+    // 403 - Accès interdit
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(
+            ForbiddenException ex, HttpServletRequest request) {
 
+        return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
+    }
 
 
 
