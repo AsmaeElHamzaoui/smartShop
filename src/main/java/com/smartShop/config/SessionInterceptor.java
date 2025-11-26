@@ -55,7 +55,7 @@ public class SessionInterceptor implements HandlerInterceptor {
             }
 
             // Produits accessible
-            if (path.startsWith("/products")) {
+            if (path.startsWith("/api/products")) {
                 return true;
             }
 
