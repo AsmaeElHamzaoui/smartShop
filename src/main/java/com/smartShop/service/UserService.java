@@ -51,4 +51,26 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return userMapper.toDTO(user);
     }
+
+    // UPDATE
+    public UserDto updateUser(Integer id, RegisterRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getUsername().equals(request.getUsername())
+                && userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        user.setUsername(request.getUsername());
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword())); // hash new password
+        }
+        user.setRole(request.getRole());
+
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDTO(updatedUser);
+    }
+
+
 }
