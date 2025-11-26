@@ -52,4 +52,13 @@ public class ProductService {
         Product updated = productRepository.save(existing);
         return productMapper.toDTO(updated);
     }
+
+
+    // DELETE
+    public void delete(Integer id) {
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Produit introuvable : " + id);
+        }
+        productRepository.deleteById(id);
+    }
 }
