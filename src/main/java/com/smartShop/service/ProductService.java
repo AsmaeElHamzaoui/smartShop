@@ -31,4 +31,12 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé : " + id));
         return productMapper.toDTO(product);
     }
+
+    // READ ALL
+    public List<ProductDto> getAll() {
+        return productRepository.findAll()
+                .stream()
+                .map(productMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 }
