@@ -30,6 +30,13 @@ public class authController {
         return userDto;
     }
 
+    // LOGOUT
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // détruit la session
+        return "Logged out successfully";
+    }
+
 
 
 }
