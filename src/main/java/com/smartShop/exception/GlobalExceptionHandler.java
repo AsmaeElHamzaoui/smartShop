@@ -11,4 +11,21 @@ import java.time.LocalDateTime;
 // Centralise la gestion de TOUTES les exceptions du projet
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Méthode utilitaire pour construire la réponse JSON
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            Exception ex, HttpStatus status, HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                status.value(),
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, status);
+    }
+
+
 }
