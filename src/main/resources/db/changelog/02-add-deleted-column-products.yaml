@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-add-deleted-column-products
+      author: smartshop
+      changes:
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
