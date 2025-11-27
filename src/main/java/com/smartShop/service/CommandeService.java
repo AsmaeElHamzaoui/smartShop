@@ -45,5 +45,19 @@ public class CommandeService {
         };
     }
 
+    // calcule niveau de fidilité
+    private NiveauFidelite calculerNiveauFidelite(int totalOrders, BigDecimal totalSpent) {
+
+        if (totalOrders >= 20 || totalSpent.compareTo(new BigDecimal("15000")) >= 0)
+            return NiveauFidelite.PLATINUM;
+
+        if (totalOrders >= 10 || totalSpent.compareTo(new BigDecimal("5000")) >= 0)
+            return NiveauFidelite.GOLD;
+
+        if (totalOrders >= 3 || totalSpent.compareTo(new BigDecimal("1000")) >= 0)
+            return NiveauFidelite.SILVER;
+
+        return NiveauFidelite.BASIC;
+    }
 
 }
