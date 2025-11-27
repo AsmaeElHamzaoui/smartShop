@@ -25,5 +25,9 @@ public class Product {
 
     @Column(name = "stock_disponible", nullable = false)
     private Integer stockDisponible;
+
+    // Soft delete field
+    @Column(nullable = false)
+    private boolean deleted = false;
 }
 
