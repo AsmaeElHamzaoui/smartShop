@@ -175,9 +175,12 @@ public class CommandeService {
     }
 
 
-
-
-
+    // Supprime (soft)
+    public void delete(Integer id) {
+        if (!commandeRepository.existsById(id))
+            throw new RuntimeException("Commande introuvable");
+        commandeRepository.deleteById(id);
+    }
 
 
     // LOGIQUE FIDÉLITÉ
