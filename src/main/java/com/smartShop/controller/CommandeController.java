@@ -30,6 +30,13 @@ public class CommandeController {
         return ResponseEntity.ok(confirmed);
     }
 
+    // ANNULER COMMANDE
+    @PutMapping("/{id}/annuler")
+    public ResponseEntity<CommandeDto> annuler(@PathVariable Integer id) {
+        CommandeDto cancelled = service.annuler(id);
+        return ResponseEntity.ok(cancelled);
+    }
+
 
 
 }
