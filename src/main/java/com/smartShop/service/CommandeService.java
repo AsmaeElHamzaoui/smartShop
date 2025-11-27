@@ -29,6 +29,87 @@ public class CommandeService {
 
     private static final BigDecimal TVA_RATE = new BigDecimal("0.20");
 
+    // CREATE COMMANDE
+    @Transactional
+    public CommandeDto create(CommandeDto dto) {
+
+        Client client = clientRepository.findById(dto.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client introuvable"));
+
+        // Mapper DTO vers entity (sans orderItems encore)
+        Commande entity = mapper.toEntity(dto);
+        entity.setClient(client);
+        entity.setDate(LocalDate.now());
+        entity.setStatut(OrderStatus.PENDING);
+
+        // --- Créer et lier les OrderItems ---
+        List<OrderItem> items = dto.getOrderItems().stream().map(itemDto -> {
+            Product product = productRepository.findById(itemDto.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+
+            // Vérifier stock
+            if (product.getStockDisponible() < itemDto.getQuantite()) {
+                entity.setStatut(OrderStatus.REJECTED);
+                throw new RuntimeException("Stock insuffisant pour le produit " + product.getNom());
+            }
+
+            // Déduire du stock
+            product.setStockDisponible(product.getStockDisponible() - itemDto.getQuantite());
+
+            // Créer l'OrderItem
+            OrderItem item = new OrderItem();
+            item.setProduct(product);
+            item.setQuantite(itemDto.getQuantite());
+            item.setPrixUnitaire(product.getPrixUnitaire());
+            item.setTotalLigne(product.getPrixUnitaire().multiply(BigDecimal.valueOf(itemDto.getQuantite())));
+            item.setCommande(entity); // Lien automatique vers la commande
+
+            return item;
+        }).toList();
+
+        entity.setOrderItems(items);
+
+        // --- Calcul sous-total ---
+        BigDecimal sousTotal = items.stream()
+                .map(OrderItem::getTotalLigne)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        entity.setSousTotal(sousTotal);
+
+        // --- Remise fidélité ---
+        int remise = calculerRemise(client, sousTotal);
+        entity.setRemise(remise);
+
+        BigDecimal montantRemise = sousTotal.multiply(BigDecimal.valueOf(remise).divide(BigDecimal.valueOf(100)));
+
+        // --- Montant HT après remise ---
+        BigDecimal montantHT = sousTotal.subtract(montantRemise);
+
+        // TVA configurable (default 20)
+        BigDecimal tva = montantHT.multiply(TVA_RATE);
+        entity.setTva(tva);
+
+        // Total TTC
+        BigDecimal total = montantHT.add(tva);
+        entity.setTotal(total);
+
+        // Restant à payer
+        entity.setMontantRestant(total);
+
+        // --- Sauvegarde en base ---
+        Commande saved = commandeRepository.save(entity);
+
+        // --- Mapper vers DTO et retourner ---
+        List<OrderItemDto> itemDtos = saved.getOrderItems().stream()
+                .map(orderItemMapper::toDTO)
+                .toList();
+
+        CommandeDto resultDto = mapper.toDTO(saved);
+        resultDto.setOrderItems(itemDtos);
+
+        return resultDto;
+    }
+
+
 
 
 
