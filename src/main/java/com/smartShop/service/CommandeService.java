@@ -111,6 +111,48 @@ public class CommandeService {
 
 
 
+    // CONFIRMER COMMANDE
+    @Transactional
+    public CommandeDto confirmer(Integer id) {
+
+        Commande cmd = commandeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+
+        if (cmd.getStatut() == OrderStatus.REJECTED)
+            throw new RuntimeException("Commande rejetée, impossible de confirmer");
+
+        cmd.setStatut(OrderStatus.CONFIRMED);
+        cmd.setMontantRestant(BigDecimal.ZERO);
+
+        // Mise à jour statistiques client
+        Client client = cmd.getClient();
+
+        long totalOrders = commandeRepository.count(); // simple
+
+        BigDecimal totalSpent = clientTotalSpent(client.getId()).add(cmd.getTotal());
+
+        // Mise à jour niveau fidélité
+        client.setNiveauFidelite(
+                calculerNiveauFidelite((int) totalOrders, totalSpent)
+        );
+
+        commandeRepository.save(cmd);
+        clientRepository.save(client);
+
+        return mapper.toDTO(cmd);
+    }
+
+    private BigDecimal clientTotalSpent(Integer clientId) {
+        return commandeRepository.findAll().stream()
+                .filter(c -> c.getClient().getId().equals(clientId) && c.getStatut() == OrderStatus.CONFIRMED)
+                .map(Commande::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+
+
+
 
 
     // LOGIQUE FIDÉLITÉ
