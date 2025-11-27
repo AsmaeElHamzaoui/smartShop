@@ -38,5 +38,48 @@ public class CommandeService {
     }
 
 
+    // READ ONE
+    public CommandeDto getById(Integer id) {
+        Commande commande = commandeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée : " + id));
+        return commandeMapper.toDTO(commande);
+    }
+
+    // READ ALL
+    public List<CommandeDto> getAll() {
+        return commandeRepository.findAll()
+                .stream()
+                .map(commandeMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    // UPDATE
+    public CommandeDto update(Integer id, CommandeDto dto) {
+
+        Commande existing = commandeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée : " + id));
+
+        // On ne modifie pas le client via update (mais si tu veux le permettre je peux l'ajouter)
+        existing.setDate(dto.getDate());
+        existing.setSousTotal(dto.getSousTotal());
+        existing.setRemise(dto.getRemise());
+        existing.setTva(dto.getTva());
+        existing.setTotal(dto.getTotal());
+        existing.setCodePromo(dto.getCodePromo());
+        existing.setStatut(dto.getStatut());
+        existing.setMontantRestant(dto.getMontantRestant());
+
+        Commande updated = commandeRepository.save(existing);
+        return commandeMapper.toDTO(updated);
+    }
+
+    // DELETE
+    public void delete(Integer id) {
+        if (!commandeRepository.existsById(id)) {
+            throw new RuntimeException("Commande introuvable : " + id);
+        }
+        commandeRepository.deleteById(id);
+    }
+
 
 }
