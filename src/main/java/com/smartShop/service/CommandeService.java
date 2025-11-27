@@ -1,17 +1,20 @@
 package com.smartShop.service;
 
-
 import com.smartShop.dto.CommandeDto;
-import com.smartShop.entity.Client;
-import com.smartShop.entity.Commande;
+import com.smartShop.dto.OrderItemDto;
+import com.smartShop.entity.*;
+import com.smartShop.enums.NiveauFidelite;
+import com.smartShop.enums.OrderStatus;
 import com.smartShop.mapper.CommandeMapper;
-import com.smartShop.repository.ClientRepository;
-import com.smartShop.repository.CommandeRepository;
+import com.smartShop.mapper.OrderItemMapper;
+import com.smartShop.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,66 +22,27 @@ public class CommandeService {
 
     private final CommandeRepository commandeRepository;
     private final ClientRepository clientRepository;
-    private final CommandeMapper commandeMapper;
+    private final ProductRepository productRepository;
+    private final CommandeMapper mapper;
+    private final OrderItemMapper orderItemMapper;
 
 
-    // CREATE
-    public CommandeDto create(CommandeDto dto) {
-
-        // Récupération du client depuis la base
-        Client client = clientRepository.findById(dto.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client non trouvé : " + dto.getClientId()));
-
-        // Mapping DTO → Entity
-        Commande commande = commandeMapper.toEntity(dto);
-        commande.setClient(client);
-
-        Commande saved = commandeRepository.save(commande);
-        return commandeMapper.toDTO(saved);
-    }
+    private static final BigDecimal TVA_RATE = new BigDecimal("0.20");
 
 
-    // READ ONE
-    public CommandeDto getById(Integer id) {
-        Commande commande = commandeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande non trouvée : " + id));
-        return commandeMapper.toDTO(commande);
-    }
 
-    // READ ALL
-    public List<CommandeDto> getAll() {
-        return commandeRepository.findAll()
-                .stream()
-                .map(commandeMapper::toDTO)
-                .collect(Collectors.toList());
-    }
 
-    // UPDATE
-    public CommandeDto update(Integer id, CommandeDto dto) {
+    // LOGIQUE FIDÉLITÉ
 
-        Commande existing = commandeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande non trouvée : " + id));
+    // Calcule de remise
+    private int calculerRemise(Client client, BigDecimal sousTotal) {
 
-        // On ne modifie pas le client via update (mais si tu veux le permettre je peux l'ajouter)
-        existing.setDate(dto.getDate());
-        existing.setSousTotal(dto.getSousTotal());
-        existing.setRemise(dto.getRemise());
-        existing.setTva(dto.getTva());
-        existing.setTotal(dto.getTotal());
-        existing.setCodePromo(dto.getCodePromo());
-        existing.setStatut(dto.getStatut());
-        existing.setMontantRestant(dto.getMontantRestant());
-
-        Commande updated = commandeRepository.save(existing);
-        return commandeMapper.toDTO(updated);
-    }
-
-    // DELETE
-    public void delete(Integer id) {
-        if (!commandeRepository.existsById(id)) {
-            throw new RuntimeException("Commande introuvable : " + id);
-        }
-        commandeRepository.deleteById(id);
+        return switch (client.getNiveauFidelite()) {
+            case SILVER -> sousTotal.compareTo(new BigDecimal("500")) >= 0 ? 5 : 0;
+            case GOLD -> sousTotal.compareTo(new BigDecimal("800")) >= 0 ? 10 : 0;
+            case PLATINUM -> sousTotal.compareTo(new BigDecimal("1200")) >= 0 ? 15 : 0;
+            default -> 0;
+        };
     }
 
 
