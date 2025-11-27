@@ -150,6 +150,16 @@ public class CommandeService {
     }
 
 
+    // ANNULER COMMANDE
+    public CommandeDto annuler(Integer id) {
+        Commande cmd = commandeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+
+        cmd.setStatut(OrderStatus.CANCELED);
+        return mapper.toDTO(commandeRepository.save(cmd));
+    }
+
+
 
 
 
