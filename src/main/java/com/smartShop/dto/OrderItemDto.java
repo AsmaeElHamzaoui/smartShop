@@ -10,7 +10,9 @@ public class OrderItemDto {
 
     private Integer id;
 
-    private Integer produitId;
+    private Integer productId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer commandeId;
 
     private Integer quantite;
