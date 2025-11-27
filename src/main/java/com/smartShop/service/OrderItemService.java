@@ -88,6 +88,12 @@ public class OrderItemService {
         return mapper.toDTO(orderItemRepository.save(existing));
     }
 
-
+    // DELETE
+    public void delete(Integer id) {
+        if (!orderItemRepository.existsById(id)) {
+            throw new RuntimeException("OrderItem introuvable");
+        }
+        orderItemRepository.deleteById(id);
+    }
 
 }
