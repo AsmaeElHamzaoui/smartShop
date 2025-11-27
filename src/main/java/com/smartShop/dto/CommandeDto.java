@@ -3,8 +3,10 @@ package com.smartShop.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smartShop.enums.OrderStatus;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class CommandeDto {
@@ -28,5 +30,11 @@ public class CommandeDto {
 
     private String codePromo;
     private OrderStatus statut;
+
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal montantRestant;
+
+
+    private List<OrderItemDto> orderItems;
 }
