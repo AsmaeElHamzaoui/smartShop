@@ -7,4 +7,8 @@ databaseChangeLog:
       file: db/changelog/01-create-table-products.yaml
   - include:
       file: db/changelog/01-create-table-commandes.yaml
+  - include:
+      file: db/changelog/01-create-table-order_items.yaml
+  - include:
+      file: db/changelog/02-add-deleted-column-products.yaml
 
