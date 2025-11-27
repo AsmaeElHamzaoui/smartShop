@@ -26,4 +26,19 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.getAll());
     }
 
+    // READ ONE
+    @GetMapping("/{id}")
+    public ResponseEntity<CommandeDto> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(commandeService.getById(id));
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<CommandeDto> update(
+            @PathVariable Integer id,
+            @RequestBody CommandeDto dto
+    ) {
+        return ResponseEntity.ok(commandeService.update(id, dto));
+    }
+
 }
