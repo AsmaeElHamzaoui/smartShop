@@ -20,7 +20,7 @@ public class OrderItem {
 
     // Relation ManyToOne vers Produit
     @ManyToOne
-    @JoinColumn(name = "produit_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     // Relation ManyToOne vers Commande

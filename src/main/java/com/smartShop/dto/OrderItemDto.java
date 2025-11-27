@@ -14,6 +14,9 @@ public class OrderItemDto {
     private Integer commandeId;
 
     private Integer quantite;
+
+    //Automatiquement va prendre le prix du produit commandé
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal prixUnitaire;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
