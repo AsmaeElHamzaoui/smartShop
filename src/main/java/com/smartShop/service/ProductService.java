@@ -28,6 +28,7 @@ public class ProductService {
     // READ ONE
     public ProductDto getById(Integer id) {
         Product product = productRepository.findById(id)
+                .filter(p -> !p.isDeleted()) // exclure les produits supprimés
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé : " + id));
         return productMapper.toDTO(product);
     }
@@ -36,6 +37,7 @@ public class ProductService {
     public List<ProductDto> getAll() {
         return productRepository.findAll()
                 .stream()
+                .filter(p -> !p.isDeleted()) // exclure les produits supprimés
                 .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -44,6 +46,11 @@ public class ProductService {
     public ProductDto update(Integer id, ProductDto dto) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé : " + id));
+
+       // empêcher la modification d’un produit supprimé
+        if (existing.isDeleted()) {
+            throw new RuntimeException("Impossible de modifier un produit supprimé");
+        }
 
         existing.setNom(dto.getNom());
         existing.setPrixUnitaire(dto.getPrixUnitaire());
@@ -56,9 +63,10 @@ public class ProductService {
 
     // DELETE
     public void delete(Integer id) {
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Produit introuvable : " + id);
-        }
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produit introuvable : " + id));
+
+        existing.setDeleted(true); // soft delete
         productRepository.deleteById(id);
     }
 }
