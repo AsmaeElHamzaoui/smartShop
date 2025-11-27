@@ -5,4 +5,6 @@ databaseChangeLog:
       file: db/changelog/01-create-table-clients.yaml
   - include:
       file: db/changelog/01-create-table-products.yaml
+  - include:
+      file: db/changelog/01-create-table-commandes.yaml
 
