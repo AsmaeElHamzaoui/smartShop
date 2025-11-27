@@ -37,6 +37,25 @@ public class CommandeController {
         return ResponseEntity.ok(cancelled);
     }
 
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<List<CommandeDto>> getAll() {
+        List<CommandeDto> list = service.getAll();
+        return ResponseEntity.ok(list);
+    }
 
+    // GET ONE
+    @GetMapping("/{id}")
+    public ResponseEntity<CommandeDto> getById(@PathVariable Integer id) {
+        CommandeDto dto = service.getById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }
