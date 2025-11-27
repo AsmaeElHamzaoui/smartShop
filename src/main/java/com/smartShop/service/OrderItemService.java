@@ -62,5 +62,32 @@ public class OrderItemService {
         return mapper.toDTO(item);
     }
 
+    // UPDATE
+    public OrderItemDto update(Integer id, OrderItemDto dto) {
+
+        OrderItem existing = orderItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("OrderItem introuvable"));
+
+        Product product = productRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+
+        Commande commande = commandeRepository.findById(dto.getCommandeId())
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+
+        existing.setProduct(product);
+        existing.setCommande(commande);
+        existing.setQuantite(dto.getQuantite());
+
+        // prix unitaire = prix du produit
+        existing.setPrixUnitaire(product.getPrixUnitaire());
+
+        // total recalculé
+        existing.setTotalLigne(product.getPrixUnitaire()
+                .multiply(BigDecimal.valueOf(dto.getQuantite())));
+
+        return mapper.toDTO(orderItemRepository.save(existing));
+    }
+
+
 
 }
