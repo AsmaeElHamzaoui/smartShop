@@ -160,6 +160,21 @@ public class CommandeService {
     }
 
 
+    // GET ALL
+    public java.util.List<CommandeDto> getAll() {
+        return commandeRepository.findAll()
+                .stream().map(mapper::toDTO).toList();
+    }
+
+
+    // GET ONE
+    public CommandeDto getById(Integer id) {
+        Commande c = commandeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+        return mapper.toDTO(c);
+    }
+
+
 
 
 
