@@ -17,5 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommandeService {
 
+    private final CommandeRepository commandeRepository;
+    private final ClientRepository clientRepository;
+    private final CommandeMapper commandeMapper;
 
 }
