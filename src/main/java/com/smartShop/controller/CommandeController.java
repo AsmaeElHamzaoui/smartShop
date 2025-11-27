@@ -23,5 +23,13 @@ public class CommandeController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
+    // CONFIRMER COMMANDE
+    @PutMapping("/{id}/confirmer")
+    public ResponseEntity<CommandeDto> confirmer(@PathVariable Integer id) {
+        CommandeDto confirmed = service.confirmer(id);
+        return ResponseEntity.ok(confirmed);
+    }
+
+
 
 }
