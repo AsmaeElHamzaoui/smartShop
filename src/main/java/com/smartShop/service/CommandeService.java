@@ -21,4 +21,22 @@ public class CommandeService {
     private final ClientRepository clientRepository;
     private final CommandeMapper commandeMapper;
 
+
+    // CREATE
+    public CommandeDto create(CommandeDto dto) {
+
+        // Récupération du client depuis la base
+        Client client = clientRepository.findById(dto.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client non trouvé : " + dto.getClientId()));
+
+        // Mapping DTO → Entity
+        Commande commande = commandeMapper.toEntity(dto);
+        commande.setClient(client);
+
+        Commande saved = commandeRepository.save(commande);
+        return commandeMapper.toDTO(saved);
+    }
+
+
+
 }
