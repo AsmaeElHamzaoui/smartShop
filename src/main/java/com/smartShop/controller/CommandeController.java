@@ -12,4 +12,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommandeController {
 
+    private final CommandeService commandeService;
+
+    // CREATE
+    @PostMapping
+    public ResponseEntity<CommandeDto> create(@RequestBody CommandeDto dto) {
+        return ResponseEntity.ok(commandeService.create(dto));
+    }
+
+    // READ ALL
+    @GetMapping
+    public ResponseEntity<List<CommandeDto>> getAll() {
+        return ResponseEntity.ok(commandeService.getAll());
+    }
+
 }
