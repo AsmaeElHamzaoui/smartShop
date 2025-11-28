@@ -192,6 +192,21 @@ class CommandeServiceTest {
         assertEquals(commandeDto, result);
     }
 
+    @Test
+    void testDelete_Success() {
+        when(commandeRepository.existsById(1)).thenReturn(true);
 
+        service.delete(1);
+
+        verify(commandeRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void testDelete_NotFound() {
+        when(commandeRepository.existsById(1)).thenReturn(false);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.delete(1));
+        assertTrue(ex.getMessage().contains("Commande introuvable"));
+    }
 
 }

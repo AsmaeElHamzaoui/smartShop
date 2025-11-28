@@ -5,6 +5,7 @@ import com.smartShop.dto.OrderItemDto;
 import com.smartShop.entity.*;
 import com.smartShop.enums.NiveauFidelite;
 import com.smartShop.enums.OrderStatus;
+import com.smartShop.enums.PaymentStatus;
 import com.smartShop.mapper.CommandeMapper;
 import com.smartShop.mapper.OrderItemMapper;
 import com.smartShop.repository.*;
@@ -121,20 +122,28 @@ public class CommandeService {
         if (cmd.getStatut() == OrderStatus.REJECTED)
             throw new RuntimeException("Commande rejetée, impossible de confirmer");
 
+        // Vérifier que tous les paiements nécessaires sont encaissés
+        BigDecimal totalEncaisse = cmd.getPaiements().stream()
+                .filter(p -> p.getStatusPaiement() == PaymentStatus.ENCAISSÉ)
+                .map(Paiement::getMontant)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (totalEncaisse.compareTo(cmd.getTotal()) < 0) {
+            throw new RuntimeException("La commande ne peut être confirmée : paiement incomplet");
+        }
+
+        // Tous les paiements encaissés, on peut confirmer
         cmd.setStatut(OrderStatus.CONFIRMED);
         cmd.setMontantRestant(BigDecimal.ZERO);
 
         // Mise à jour statistiques client
         Client client = cmd.getClient();
-
-        long totalOrders = commandeRepository.count(); // simple
+        long totalOrders = commandeRepository.count();
 
         BigDecimal totalSpent = clientTotalSpent(client.getId()).add(cmd.getTotal());
 
         // Mise à jour niveau fidélité
-        client.setNiveauFidelite(
-                calculerNiveauFidelite((int) totalOrders, totalSpent)
-        );
+        client.setNiveauFidelite(calculerNiveauFidelite((int) totalOrders, totalSpent));
 
         commandeRepository.save(cmd);
         clientRepository.save(client);
@@ -199,7 +208,7 @@ public class CommandeService {
     // calcule niveau de fidilité
     private NiveauFidelite calculerNiveauFidelite(int totalOrders, BigDecimal totalSpent) {
 
-        if (totalOrders >= 20 || totalSpent.compareTo(new BigDecimal("15000")) >= 0)
+        if (totalOrders >= 20  || totalSpent.compareTo(new BigDecimal("15000")) >= 0)
             return NiveauFidelite.PLATINUM;
 
         if (totalOrders >= 10 || totalSpent.compareTo(new BigDecimal("5000")) >= 0)
