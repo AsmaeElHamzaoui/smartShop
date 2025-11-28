@@ -109,5 +109,27 @@ public class PaiementService {
         return mapper.toDTO(paiement);
     }
 
+    // GET ALL PAIEMENTS
+    public List<PaiementDto> getAll() {
+        return paiementRepository.findAll().stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
+    // GET PAIEMENTS D'UNE COMMANDE
+    public List<PaiementDto> getByCommande(Integer commandeId) {
+        Commande commande = commandeRepository.findById(commandeId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+
+        return paiementRepository.findByCommandeOrderByNumeroPaiementAsc(commande).stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    // GET ONE PAIEMENT
+    public PaiementDto getById(Integer id) {
+        Paiement paiement = paiementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+        return mapper.toDTO(paiement);
+    }
 }
