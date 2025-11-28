@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: smartshop
+      changes:
+        - createTable:
+            tableName: paiements
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: commande_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: numero_paiement
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: montant
+                  type: DECIMAL(15,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_paiement
+                  type: VARCHAR(50)
+                  defaultValue: EN_ATTENTE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type_paiement
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_paiement
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_encaissement
+                  type: TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: paiements
+            baseColumnNames: commande_id
+            referencedTableName: commandes
+            referencedColumnNames: id
+            constraintName: fk_paiements_commande
