@@ -72,5 +72,25 @@ public class PaiementService {
         return mapper.toDTO(saved);
     }
 
+    // MODIFIER STATUS / ENCAISSER
+    @Transactional
+    public PaiementDto mettreAJourStatus(Integer id, PaymentStatus status, LocalDateTime dateEncaissement) {
+        Paiement paiement = paiementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+
+        paiement.setStatusPaiement(status);
+
+        if (status == PaymentStatus.ENCAISSÉ && paiement.getDateEncaissement() == null) {
+            paiement.setDateEncaissement(dateEncaissement != null ? dateEncaissement : LocalDateTime.now());
+
+            Commande cmd = paiement.getCommande();
+            BigDecimal nouveauRestant = cmd.getMontantRestant().subtract(paiement.getMontant());
+            cmd.setMontantRestant(nouveauRestant.max(BigDecimal.ZERO));
+            commandeRepository.save(cmd);
+        }
+
+        return mapper.toDTO(paiementRepository.save(paiement));
+    }
+
 
 }
