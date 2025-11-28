@@ -23,5 +23,14 @@ public class PaiementController {
         return ResponseEntity.ok(service.creerPaiement(dto));
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<PaiementDto> mettreAJourStatus(
+            @PathVariable Integer id,
+            @RequestParam PaymentStatus status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEncaissement
+    ) {
+        return ResponseEntity.ok(service.mettreAJourStatus(id, status, dateEncaissement));
+    }
+
 
 }
