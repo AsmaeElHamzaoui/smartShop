@@ -93,4 +93,21 @@ public class PaiementService {
     }
 
 
+    // ANNULER PAIEMENT
+    @Transactional
+    public PaiementDto annulerPaiement(Integer id) {
+        Paiement paiement = paiementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+
+        Commande cmd = paiement.getCommande();
+        if (paiement.getStatusPaiement() == PaymentStatus.ENCAISSÉ) {
+            cmd.setMontantRestant(cmd.getMontantRestant().add(paiement.getMontant()));
+            commandeRepository.save(cmd);
+        }
+
+        paiementRepository.delete(paiement);
+        return mapper.toDTO(paiement);
+    }
+
+
 }
