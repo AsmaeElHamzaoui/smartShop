@@ -32,5 +32,23 @@ public class PaiementController {
         return ResponseEntity.ok(service.mettreAJourStatus(id, status, dateEncaissement));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PaiementDto> annulerPaiement(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.annulerPaiement(id));
+    }
 
+    @GetMapping
+    public ResponseEntity<List<PaiementDto>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaiementDto> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    @GetMapping("/commande/{commandeId}")
+    public ResponseEntity<List<PaiementDto>> getByCommande(@PathVariable Integer commandeId) {
+        return ResponseEntity.ok(service.getByCommande(commandeId));
+    }
 }
