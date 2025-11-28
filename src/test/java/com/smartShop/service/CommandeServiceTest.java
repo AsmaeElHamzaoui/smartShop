@@ -117,5 +117,34 @@ class CommandeServiceTest {
         assertTrue(ex.getMessage().contains("Stock insuffisant"));
     }
 
+    @Test
+    void testConfirmer_Success() {
+        Paiement paiement = new Paiement();
+        paiement.setMontant(commande.getTotal());
+        paiement.setStatusPaiement(PaymentStatus.ENCAISSÉ);
+        commande.setPaiements(List.of(paiement));
+        when(commandeRepository.findById(1)).thenReturn(Optional.of(commande));
+        when(commandeRepository.count()).thenReturn(1L);
+        when(commandeRepository.findAll()).thenReturn(List.of(commande));
+        when(mapper.toDTO(commande)).thenReturn(commandeDto);
+
+        CommandeDto result = service.confirmer(1);
+
+        assertEquals(OrderStatus.CONFIRMED, commande.getStatut());
+        assertEquals(BigDecimal.ZERO, commande.getMontantRestant());
+        assertEquals(commandeDto, result);
+        verify(commandeRepository, times(1)).save(commande);
+        verify(clientRepository, times(1)).save(client);
+    }
+
+    @Test
+    void testConfirmer_CommandeRejected() {
+        commande.setStatut(OrderStatus.REJECTED);
+        when(commandeRepository.findById(1)).thenReturn(Optional.of(commande));
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.confirmer(1));
+        assertTrue(ex.getMessage().contains("Commande rejetée"));
+    }
+
 
 }
