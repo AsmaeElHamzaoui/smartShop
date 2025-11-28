@@ -171,4 +171,27 @@ class CommandeServiceTest {
     }
 
 
+    @Test
+    void testGetAll() {
+        when(commandeRepository.findAll()).thenReturn(List.of(commande));
+        when(mapper.toDTO(commande)).thenReturn(commandeDto);
+
+        List<CommandeDto> result = service.getAll();
+
+        assertEquals(1, result.size());
+        assertEquals(commandeDto, result.get(0));
+    }
+
+    @Test
+    void testGetById() {
+        when(commandeRepository.findById(1)).thenReturn(Optional.of(commande));
+        when(mapper.toDTO(commande)).thenReturn(commandeDto);
+
+        CommandeDto result = service.getById(1);
+
+        assertEquals(commandeDto, result);
+    }
+
+
+
 }
