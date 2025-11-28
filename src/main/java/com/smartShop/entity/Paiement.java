@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Paiement {
 
     @Id
@@ -23,23 +24,23 @@ public class Paiement {
     @JoinColumn(name = "commande_id", nullable = false)
     private Commande commande;
 
-    @Column(name = "numero_paiement", nullable = false)
-    private Integer numeroPaiement;
+    @Column(nullable = false)
+    private Integer numeroPaiement; // numéro séquentiel pour la commande
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false)
     private BigDecimal montant;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_paiement", nullable = false)
-    private PaymentStatus statusPaiement;
+    @Column(nullable = false)
+    private PaymentStatus statusPaiement = PaymentStatus.EN_ATTENTE;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type_paiement", nullable = false)
+    @Column(nullable = false)
     private TypePaiement typePaiement;
 
-    @Column(name = "date_paiement", nullable = false)
-    private LocalDateTime datePaiement;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime datePaiement; // READ_ONLY
 
-    @Column(name = "date_encaissement")
-    private LocalDateTime dateEncaissement;
+    @Column(updatable = false)
+    private LocalDateTime dateEncaissement; // READ_ONLY
 }
