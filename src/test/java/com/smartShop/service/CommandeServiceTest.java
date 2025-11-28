@@ -146,5 +146,29 @@ class CommandeServiceTest {
         assertTrue(ex.getMessage().contains("Commande rejetée"));
     }
 
+    @Test
+    void testConfirmer_PaiementIncomplet() {
+        Paiement paiement = new Paiement();
+        paiement.setMontant(BigDecimal.valueOf(50));
+        paiement.setStatusPaiement(PaymentStatus.ENCAISSÉ);
+        commande.setPaiements(List.of(paiement));
+        when(commandeRepository.findById(1)).thenReturn(Optional.of(commande));
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.confirmer(1));
+        assertTrue(ex.getMessage().contains("paiement incomplet"));
+    }
+
+    @Test
+    void testAnnuler() {
+        when(commandeRepository.findById(1)).thenReturn(Optional.of(commande));
+        when(commandeRepository.save(commande)).thenReturn(commande);
+        when(mapper.toDTO(commande)).thenReturn(commandeDto);
+
+        CommandeDto result = service.annuler(1);
+
+        assertEquals(OrderStatus.CANCELED, commande.getStatut());
+        assertEquals(commandeDto, result);
+    }
+
 
 }
